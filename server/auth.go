@@ -7,11 +7,9 @@ import (
 
 func main() {
 
-	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("./css"))))
-
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
-		http.ServeFile(w, r, "index.html")
+		http.FileServer(http.Dir("./")).ServeHTTP(w, r)
 
 	})
 	http.HandleFunc("/submit", func(w http.ResponseWriter, r *http.Request) {
@@ -24,8 +22,14 @@ func main() {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	})
 
-	http.HandleFunc("/auth", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "regis.html")
+	http.HandleFunc("/auth/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/auth/regis.html" {
+			http.ServeFile(w, r, "regis.html")
+			return
+		}
+
+		http.NotFound(w, r)
+
 	})
 
 	http.HandleFunc("/REGsubmit", func(w http.ResponseWriter, r *http.Request) {
