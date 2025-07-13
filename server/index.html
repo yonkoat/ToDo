@@ -4,12 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/style.css">
-    <title>Document</title>
+    <title>Log in</title>
 </head>
 <body>
-    <form action="/auth/index.html">
-        <label>Welcome!</label>
-        <input type="submit" name="welcome" value="Lets go!">
+    <form method="post" action="/submit">
+        <label>Login</label>
+        <input type="text" name="name">
+        <label>Password</label>
+        <input type="password" name="password">
+        <input type="submit" name="submit" value="Enter">
+        <p class="no-reg">You dont have an account?</p>
+        <div class="reg-container">
+            <a href="/auth/regis.html">Registrate</a>
+        </div>
+        
     </form>
 </body>
 </html>
