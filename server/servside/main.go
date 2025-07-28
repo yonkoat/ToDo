@@ -8,12 +8,15 @@ func main() {
 	//редирект с корня сайта
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
-			http.Redirect(w, r, "./front/index.html", http.StatusSeeOther)
+			http.Redirect(w, r, "/home", http.StatusSeeOther)
 			return
 		} else {
 			http.NotFound(w, r)
 		}
 
+	})
+	http.HandleFunc("/home", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./front/index.html")
 	})
 	//обработка страницы логина для получения последующих post запросов
 	http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
