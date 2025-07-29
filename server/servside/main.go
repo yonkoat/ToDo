@@ -15,9 +15,15 @@ func main() {
 		}
 
 	})
+
 	http.HandleFunc("/home", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./front/index.html")
 	})
+
+	http.HandleFunc("/registrate", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./front/registrate.html")
+	})
+
 	//обработка страницы логина для получения последующих post запросов
 	http.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 
