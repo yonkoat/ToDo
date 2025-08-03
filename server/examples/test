@@ -1,0 +1,64 @@
+package main
+
+import (
+	"database/sql"
+	"fmt"
+	"log"
+
+	_ "github.com/mattn/go-sqlite3" // драйвер для SQLite
+)
+
+func main() {
+	// Открываем (или создаём) файл базы данных
+	db, err := sql.Open("sqlite3", "./users.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	// Создаём таблицу users, если её нет
+	createTableSQL := `
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT NOT NULL UNIQUE,
+        username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL
+    );`
+	_, err = db.Exec(createTableSQL)
+	if err != nil {
+		log.Fatalf("Error creating table: %v\n", err)
+	}
+	fmt.Println("Table 'users' created or already exists.")
+
+	// Вставка одного пользователя
+	insertUserSQL := `INSERT INTO users (email, username, password) VALUES (?, ?, ?)`
+	res, err := db.Exec(insertUserSQL, "user@example.com", "user123", "securepassword")
+	if err != nil {
+		log.Fatalf("Error inserting user: %v\n", err)
+	}
+	lastID, _ := res.LastInsertId()
+	fmt.Printf("Inserted user with ID %d\n", lastID)
+
+	// Чтение пользователей из таблицы
+	rows, err := db.Query("SELECT id, email, username FROM users")
+	if err != nil {
+		log.Fatalf("Error querying users: %v\n", err)
+	}
+	defer rows.Close()
+
+	fmt.Println("Users in database:")
+	for rows.Next() {
+		var id int
+		var email, username string
+		err = rows.Scan(&id, &email, &username)
+		if err != nil {
+			log.Fatalf("Error scanning row: %v\n", err)
+		}
+		fmt.Printf("ID: %d, Email: %s, Username: %s\n", id, email, username)
+	}
+
+	// Проверка ошибок после обхода всех строк
+	if err = rows.Err(); err != nil {
+		log.Fatalf("Row iteration error: %v\n", err)
+	}
+}
